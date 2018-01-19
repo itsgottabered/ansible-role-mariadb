@@ -1,7 +1,7 @@
 mariadb
 ======
 
-For setting up MariaDB on an Ubuntu 16.04 server.
+For setting up MariaDB on an Ubuntu 14.04 or 16.04 server.
 
 
 Requirements

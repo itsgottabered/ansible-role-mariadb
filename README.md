@@ -10,8 +10,18 @@ Requirements
 
 Role Variables
 --------------
-
-n/a
+* mysql_max_allowed_packet
+* mysql_transaction_isolation
+* mysql_binlog_format
+* mysql_max_connections
+* mysql_expire_logs_days
+* mysql_general_log_file
+* mysql_general_log
+* mysql_slow_query_log
+* mysql_slow_query_log_file
+* mysql_long_query_time
+* mysql_innodb_log_file_size
+* mysql_datadir
 
 Dependencies
 ------------

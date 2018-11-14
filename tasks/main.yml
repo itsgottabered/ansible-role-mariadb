@@ -6,10 +6,30 @@
       and ansible_distribution_version != '18.04')
 
 - name: Install software-properties-common
-  apt: name=software-properties-common update_cache=yes state=present
+  apt:
+    name: software-properties-common
+    update_cache: false
+    state: present
+
+- name: Apply apt config for MariaDB 10.3 on Ubuntu 18.04
+  block:
+  - name: Add apt repo for MariaDB
+    apt_repository:
+      repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_mirror_proto }}://{{ mariadb_mirror }}/mariadb/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main
+      state: absent
+      update_cache: false
+  - name: Add apt key for MariaDB
+    apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: F1656F24C74CD1D8
+  when: ansible_distribution_version is version (18.04, '==')
+    and mariadb_version is version(10.3, '==')
 
 - name: Install MariaDB Server
-  apt: name=mariadb-server state=present update_cache=yes
+  apt:
+    name: mariadb-server
+    state: present
+    update_cache: yes
 
 - name: Install python module
   apt: name=python-mysqldb state=present
@@ -38,9 +58,6 @@
 - name: Check for existence of /root/.my.cnf
   stat: path=/root/.my.cnf
   register: root_my_cnf
-  when: ansible_distribution_version == '14.04'
-    or ansible_distribution_version == '16.04'
-    # Not necessary for 18.04 , apparently?!
 
 - name: Check if mysql root password set
   fail:
@@ -70,9 +87,6 @@
   template: src=root/my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600 backup=yes
   when: mysql_password_changed is defined
     and mysql_password_changed is changed
-    and (ansible_distribution_version == '14.04'
-        or ansible_distribution_version == '16.04')
-  # ^^^ root password storage not necessary for 18.04
 
 - name: Apply Acro's MariaDB 10.0 server config to Ubuntu 16.04
   template:

@@ -26,3 +26,10 @@ mysql_long_query_time: 10
 
 #   Setting the mysql datadir
 # mysql_datadir: /var/lib/mysql
+
+
+# mariadb_version: Install whatever the default version for the distro is
+mariadb_version: auto
+mariadb_mirror: mirror.its.dal.ca
+mariadb_mirror_proto: https
+

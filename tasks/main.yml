@@ -11,7 +11,7 @@
     update_cache: false
     state: present
 
-- name: Apply apt config for MariaDB 10.3 on Ubuntu 18.04
+- name: Apply apt config for explicitly specified MariaDB versions
   block:
   - name: Add apt repo for MariaDB
     apt_repository:
@@ -22,8 +22,7 @@
     apt_key:
       keyserver: keyserver.ubuntu.com
       id: F1656F24C74CD1D8
-  when: ansible_distribution_version is version (18.04, '==')
-    and mariadb_version is version(10.3, '==')
+  when: mariadb_version != 'auto'
 
 - name: Install MariaDB Server
   apt:

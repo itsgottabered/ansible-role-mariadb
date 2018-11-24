@@ -1,12 +1,12 @@
 mariadb
 ======
 
-For setting up MariaDB on an Ubuntu 14.04 or 16.04 server.
+For setting up MariaDB on Ubuntu.
 
 
 Requirements
 ------------
-* Ubuntu
+* Ubuntu 14.04 or newer.
 
 Role Variables
 --------------
@@ -48,7 +48,7 @@ Example Playbook
 License
 -------
 
-BSD
+GPLv3
 
 Author Information
 ------------------

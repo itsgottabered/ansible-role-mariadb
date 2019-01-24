@@ -104,18 +104,18 @@
         and mysql_root_password|trim != ''
         and mysql_allow_from != 'localhost'
 
-  - name: Update mysql root password
-    mysql_user: "name=root host={{ item }} password={{ mysql_root_password }}"
-    with_items:
-      - "{{ ansible_fqdn }}"
-      - 127.0.0.1
-      - ::1
-      - localhost
-    when: (root_my_cnf is defined
-      and root_my_cnf.stat is defined
-      and root_my_cnf.stat.exists == False)
-      or mysql_root_password is defined
-    register: mysql_password_changed
+    - name: Update mysql root password
+      mysql_user: "name=root host={{ item }} password={{ mysql_root_password }}"
+      with_items:
+        - "{{ ansible_fqdn }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+      when: (root_my_cnf is defined
+        and root_my_cnf.stat is defined
+        and root_my_cnf.stat.exists == False)
+        or mysql_root_password is defined
+      register: mysql_password_changed
 
   when: client_only == false
 

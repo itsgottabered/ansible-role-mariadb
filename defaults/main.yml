@@ -3,7 +3,7 @@
 mysql_max_allowed_packet: '64M'
 mysql_max_connections: 100
 
-# Both of these values are set for better row lock handling.
+# Both of these values are set for faster row lock handling out of the box. They are not the mysql / mariadb defaults.
 mysql_transaction_isolation: 'READ-COMMITTED'
 mysql_binlog_format: 'ROW'
 
@@ -33,3 +33,5 @@ mariadb_version: auto
 mariadb_mirror: mirror.its.dal.ca
 mariadb_mirror_proto: https
 
+# In most cases we want the full meal deal. Set this to 'true' if youre using the role on an app node.
+client_only: false

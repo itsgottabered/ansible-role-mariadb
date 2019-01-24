@@ -26,12 +26,13 @@ Drupal commerce performance:
 * mysql_transaction_isolation
 * mysql_binlog_format
 
-Non-trivial:
-* mysql_innodb_log_file_size
-* mysql_datadir
+Non-trivial, potentially destructive:
+* mysql_innodb_log_file_size - Don't use this unless you you absolutely know what you're doing
+* mysql_datadir - Don't use this unless you you absolutely know what you're doing
 
 Other:
-* mariadb_mirror: $hostname # Which mirror to pull mariadb apt binaries from
+* mariadb_mirror: $hostname # Which mirror to pull mariadb apt binaries from. Only applies when setting `maradb_version`.
+* client_only (boolean): Only install the client, not the server.
 
 Dependencies
 ------------
@@ -41,9 +42,19 @@ None
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - { role: acromedia.mariadb }
+```yaml
+- hosts: dbmaster
+  become: true
+  gather_facts: true
+  roles:
+    - role: acromedia.mariadb
+
+- hosts: app-nodes
+  roles:
+    - role: acromedia.mariadb
+      vars:
+        client_only: true
+```
 
 License
 -------

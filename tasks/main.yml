@@ -79,8 +79,18 @@
         backup: false
       when: mysql_bind_address != '127.0.0.1'
       notify: restart mysql
-      tags:
-        - my.cnf
+
+    - name: Allow mysql root to run commands from {{ mysql_allow_from }}
+      mysql_user:
+        name: root
+        priv: "*.*:ALL,GRANT"
+        append_privs: true
+        state: present
+        password: '{{ mysql_root_password }}'
+        host: '{{ mysql_allow_from }}'
+      when: mysql_root_password is defined
+        and mysql_root_password|trim != ''
+        and mysql_allow_from != 'localhost'
 
   when: client_only == false
 

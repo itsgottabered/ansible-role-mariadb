@@ -43,7 +43,10 @@
 
 - block:
     - name: Ensure mysql is running and starts on boot
-      service: name=mysql state=started enabled=true
+      service:
+        name: mysql
+        state: started
+        enabled: true
 
     - name: Get list of hosts for the anonymous user.
       command: mysql -NBe 'SELECT Host FROM mysql.user WHERE User = ""'
@@ -62,6 +65,22 @@
       mysql_db:
         name: test
         state: absent
+
+    - name: Override default bind address
+      copy:
+        dest: /etc/mysql/mariadb.conf.d/99-acromedia-bind-address.cnf
+        content: |
+          [mysqld]
+          bind-address = {{ mysql_bind_address }}
+        force: true
+        owner: root
+        group: root
+        mode: 0644
+        backup: false
+      when: mysql_bind_address != '127.0.0.1'
+      notify: restart mysql
+      tags:
+        - my.cnf
 
   when: client_only == false
 

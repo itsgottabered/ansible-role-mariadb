@@ -40,3 +40,6 @@ client_only: false
 mysql_user: root
 mysql_host_address: localhost
 mysql_port: 3306
+
+# Only need to change this on mult-server setups.
+mysql_bind_address: 127.0.0.1

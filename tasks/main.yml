@@ -5,6 +5,18 @@
       and ansible_distribution_version != '16.04'
       and ansible_distribution_version != '18.04')
 
+- name: Check for existence of /root/.my.cnf
+  stat: path=/root/.my.cnf
+  register: root_my_cnf
+
+- name: Fail when /root/.my.cnf doesn't exist, and no root password has been provided
+  fail:
+    msg: Could not read password from /root/.my.cnf. If this is the first time running your playbook, append `  --extra-vars mysql_root_password=$(openssl rand -base64 24) `  to your command line. Setting the mysql root password only needs to be done once.
+  when: root_my_cnf is defined
+    and root_my_cnf.stat is defined
+    and root_my_cnf.stat.exists == False
+    and mysql_root_password is not defined
+
 - name: Install software-properties-common
   apt:
     name: software-properties-common
@@ -92,21 +104,6 @@
         and mysql_root_password|trim != ''
         and mysql_allow_from != 'localhost'
 
-  when: client_only == false
-
-- name: Check for existence of /root/.my.cnf
-  stat: path=/root/.my.cnf
-  register: root_my_cnf
-
-- name: Fail when /root/.my.cnf doesn't exist, and no root password is set
-  fail:
-    msg: Could not read password from /root/.my.cnf. If this is the first time running your playbook, append `  --extra-vars mysql_root_password=$(openssl rand -base64 24) `  to your command line. Setting the mysql root password only needs to be done once.
-  when: root_my_cnf is defined
-    and root_my_cnf.stat is defined
-    and root_my_cnf.stat.exists == False
-    and mysql_root_password is not defined
-
-- block:
   - name: Update mysql root password
     mysql_user: "name=root host={{ item }} password={{ mysql_root_password }}"
     with_items:
@@ -119,6 +116,7 @@
       and root_my_cnf.stat.exists == False)
       or mysql_root_password is defined
     register: mysql_password_changed
+
   when: client_only == false
 
 

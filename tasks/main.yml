@@ -94,7 +94,7 @@
 
     - name: Allow mysql root to run commands from {{ mysql_allow_from }}
       mysql_user:
-        name: root
+        name: "{{ mysql_user }}"
         priv: "*.*:ALL,GRANT"
         append_privs: true
         state: present
@@ -105,7 +105,10 @@
         and mysql_allow_from != 'localhost'
 
     - name: Update mysql root password
-      mysql_user: "name=root host={{ item }} password={{ mysql_root_password }}"
+      mysql_user:
+        name: "{{ mysql_user }}"
+        host: "{{ item }}"
+        password: "{{ mysql_root_password }}"
       with_items:
         - "{{ ansible_fqdn }}"
         - 127.0.0.1

@@ -45,7 +45,7 @@
 
 - name: Install MariaDB client
   apt:
-    name: mariadb-server
+    name: mariadb-client
     state: present
     update_cache: yes
   when: client_only == true

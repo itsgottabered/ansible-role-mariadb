@@ -92,7 +92,7 @@
       when: mysql_bind_address != '127.0.0.1'
       notify: restart mysql
 
-    - name: Allow mysql root to run commands from {{ mysql_allow_from }}
+    - name: Give mysql root permission to run commands from places other than localhost
       mysql_user:
         name: "{{ mysql_user }}"
         priv: "*.*:ALL,GRANT"
@@ -102,6 +102,7 @@
         host: '{{ mysql_allow_from }}'
       when: mysql_root_password is defined
         and mysql_root_password|trim != ''
+        and mysql_allow_from is defined
         and mysql_allow_from != 'localhost'
 
     - name: Update mysql root password

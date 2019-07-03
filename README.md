@@ -10,9 +10,7 @@ Requirements
 
 Role Variables
 --------------
-* maradb_version:  If you want something newer or older than what comes with apt, then specify it. Not all versions combos have been configured yet. See tasks/main.yml
-
-Performance tweaks:
+### Performance tweaks
 * mysql_max_allowed_packet
 * mysql_max_connections
 * mysql_expire_logs_days
@@ -22,17 +20,26 @@ Performance tweaks:
 * mysql_slow_query_log_file
 * mysql_long_query_time
 
-Drupal commerce performance:
+### Drupal commerce performance
 * mysql_transaction_isolation
 * mysql_binlog_format
 
-Non-trivial, potentially destructive:
-* mysql_innodb_log_file_size - Don't use this unless you you absolutely know what you're doing
-* mysql_datadir - Don't use this unless you you absolutely know what you're doing
-
-Other:
-* mariadb_mirror: $hostname # Which mirror to pull mariadb apt binaries from. Only applies when setting `maradb_version`.
+### Server + Client or or Client Only
 * client_only (boolean): Only install the client, not the server.
+
+
+### Non-Trivial, Potentially Destructive
+
+WARNING: Don't use any of the following unless you absolutely know what you're doing. These are only exposed here so you can override defaults during a new installation. They shouldn't be changed in your ansible playbook once the server is running, except in cases where the playbook is being updated to match the changes that have already been affected on the server.
+
+* **mysql_innodb_log_file_size** - affects `innodb_log_file_size` if specified. Has no default value in the playbook.
+* **mysql_datadir** - has no default value in the playbook. Most systems default to `/var/lib/mysql`.
+* **maradb_version** (string)
+  - Defaults to `auto` which will let Ubuntu install whatever default version comes with Apt.
+  - Can be `auto`, `10.1`, `10.2` or any other supported version.
+  - When not `auto`, the value for this is used to construct the repo URL
+  - If sepecifying this, you may also need to specify **mariadb_mirror**, **mariadb_mirror_proto**, and **mariadb_repo_deb_arch** - See defaults/main.yml.
+
 
 Dependencies
 ------------
@@ -48,6 +55,8 @@ Example Playbook
   gather_facts: true
   roles:
     - role: acromedia.mariadb
+      vars:
+        mysql_bind_address: 0.0.0.0
 
 - hosts: app-nodes
   roles:

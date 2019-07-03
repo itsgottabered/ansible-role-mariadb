@@ -20,16 +20,19 @@
 - name: Install software-properties-common
   apt:
     name: software-properties-common
-    update_cache: false
+    update_cache: true
     state: present
 
 - name: Apply apt config for explicitly specified MariaDB versions
   block:
   - name: Add apt repo for MariaDB
     apt_repository:
-      repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_mirror_proto }}://{{ mariadb_mirror }}/mariadb/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main
+      repo: deb [arch={{ mariadb_repo_deb_arch }}] {{ mariadb_mirror_proto }}://{{ mariadb_mirror }}/mariadb/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main
       state: present
-      update_cache: false
+      filename: mariadb
+      update_cache: true
+    tags:
+      - apt-repo
   - name: Add apt key for MariaDB
     apt_key:
       keyserver: keyserver.ubuntu.com

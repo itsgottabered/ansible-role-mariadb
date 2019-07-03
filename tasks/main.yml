@@ -28,7 +28,7 @@
   - name: Add apt repo for MariaDB
     apt_repository:
       repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_mirror_proto }}://{{ mariadb_mirror }}/mariadb/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main
-      state: absent
+      state: present
       update_cache: false
   - name: Add apt key for MariaDB
     apt_key:

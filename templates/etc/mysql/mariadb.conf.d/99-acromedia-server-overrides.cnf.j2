@@ -50,3 +50,8 @@ long_query_time = {{ mysql_long_query_time }}
 {% if mysql_expire_logs_days is defined %}
 expire_logs_days	= {{ mysql_expire_logs_days }}
 {% endif %}
+
+{% if mysql_transaction_isolation is defined and mysql_binlog_format is defined %}
+transaction-isolation = {{ mysql_transaction_isolation }}
+binlog_format = {{ mysql_binlog_format }}
+{% endif %}

@@ -96,7 +96,10 @@
       notify:
         - armdb restart mysql
 
-    - name: Give mysql root permission to run commands from places other than localhost
+    - debug:
+        var: mysql_allow_from
+
+    - name: Give mysql root permission to run commands from places other than localhost (mysql_allow_from = scalar)
       mysql_user:
         name: "{{ mysql_user }}"
         priv: "*.*:ALL,GRANT"
@@ -106,8 +109,24 @@
         host: '{{ mysql_allow_from }}'
       when: mysql_root_password is defined
         and mysql_root_password|trim != ''
-        and mysql_allow_from is defined
+        and mysql_allow_from is string
         and mysql_allow_from != 'localhost'
+
+    - name: Give mysql root permission to run commands from places other than localhost  (mysql_allow_from = list)
+      mysql_user:
+        name: "{{ mysql_user }}"
+        priv: "*.*:ALL,GRANT"
+        append_privs: true
+        state: present
+        password: '{{ mysql_root_password }}'
+        host: '{{ item }}'
+      when: mysql_root_password is defined
+        and mysql_root_password|trim != ''
+        and mysql_allow_from is iterable
+        and (not mysql_allow_from is string)
+        and mysql_allow_from |length > 0
+      with_items: "{{ mysql_allow_from }}"
+
 
     - name: Update mysql root password
       mysql_user:

@@ -27,6 +27,21 @@ Role Variables
 ### Server + Client or or Client Only
 * client_only (boolean): Only install the client, not the server.
 
+### Connectivity
+* **mysql_bind_address**: Defaults to `127.0.0.1`
+* **mysql_allow_from**
+
+  Can be a single string:
+  ```yaml
+  mysql_allow_from: '10.5.0.6'
+  ```
+  Or a list:
+  ```yaml
+  mysql_allow_from:
+    - '10.5.0.11'
+    - '10.5.0.12'
+  ```
+  Specify anything that mysql would normally support for the host field.
 
 ### Non-Trivial, Potentially Destructive
 
@@ -57,6 +72,9 @@ Example Playbook
     - role: acromedia.mariadb
       vars:
         mysql_bind_address: 0.0.0.0
+        mysql_allow_from:
+          - 10.8.8.5
+          - 10.8.8.6
 
 - hosts: app-nodes
   roles:

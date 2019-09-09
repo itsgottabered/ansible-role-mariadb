@@ -29,7 +29,7 @@ Role Variables
 
 ### Connectivity
 * **mysql_bind_address**: Defaults to `127.0.0.1`
-* **mysql_allow_from**
+* **mysql_allow_from**: What address(es) to accept connections by *root* to manage the system from.
 
   Can be a single string:
   ```yaml

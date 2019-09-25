@@ -53,7 +53,7 @@ WARNING: Don't use any of the following unless you absolutely know what you're d
   - Defaults to `auto` which will let Ubuntu install whatever default version comes with Apt.
   - Can be `auto`, `10.1`, `10.2` or any other supported version.
   - When not `auto`, the value for this is used to construct the repo URL
-  - If sepecifying this, you may also need to specify **mariadb_mirror**, **mariadb_mirror_proto**, and **mariadb_repo_deb_arch** - See defaults/main.yml.
+  - If sepecifying this, you may also need to specify **mariadb_mirror**, **mariadb_mirror_proto**, and **mariadb_repo_deb_arch** - See defaults/main.yml. Visit https://downloads.mariadb.org/mariadb/repositories to dermine the best value for these.
 
 
 Dependencies

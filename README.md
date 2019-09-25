@@ -49,7 +49,7 @@ WARNING: Don't use any of the following unless you absolutely know what you're d
 
 * **mysql_innodb_log_file_size** - affects `innodb_log_file_size` if specified. Has no default value in the playbook.
 * **mysql_datadir** - has no default value in the playbook. Most systems default to `/var/lib/mysql`.
-* **maradb_version** (string)
+* **mariadb_version** (string)
   - Defaults to `auto` which will let Ubuntu install whatever default version comes with Apt.
   - Can be `auto`, `10.1`, `10.2` or any other supported version.
   - When not `auto`, the value for this is used to construct the repo URL

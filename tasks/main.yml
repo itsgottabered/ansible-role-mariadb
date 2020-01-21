@@ -83,7 +83,7 @@
 
     - name: Override default bind address
       copy:
-        dest: /etc/mysql/mariadb.conf.d/99-acromedia-bind-address.cnf
+        dest: "{{ mysql_include_dir }}/99-acromedia-bind-address.cnf"
         content: |
           [mysqld]
           bind-address = {{ mysql_bind_address }}
@@ -173,7 +173,7 @@
 - name: Apply MariaDB server customizations on Ubuntu >= 18.04
   template:
     src: etc/mysql/mariadb.conf.d/99-acromedia-server-overrides.cnf.j2
-    dest: /etc/mysql/mariadb.conf.d/99-acromedia-server-overrides.cnf
+    dest: "{{ mysql_include_dir }}/99-acromedia-server-overrides.cnf"
     owner: root
     group: root
     mode: 0644
@@ -187,7 +187,7 @@
 - name: Apply MariaDB cient customizations on Ubuntu >= 18.04
   template:
     src: etc/mysql/mariadb.conf.d/99-acromedia-client-overrides.cnf.j2
-    dest: /etc/mysql/mariadb.conf.d/99-acromedia-client-overrides.cnf
+    dest: "{{ mysql_include_dir }}/99-acromedia-client-overrides.cnf"
     owner: root
     mode: 0644
     backup: yes

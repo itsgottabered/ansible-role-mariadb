@@ -1,0 +1,89 @@
+---
+- name: Ensure mysql is running and starts on boot
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Get list of hosts for the anonymous user.
+  command: mysql -NBe 'SELECT Host FROM mysql.user WHERE User = ""'
+  register: mysql_anonymous_hosts
+  changed_when: false
+  check_mode: no
+
+- name: Remove anonymous MySQL users.
+  mysql_user:
+     name: ""
+     host: "{{ item }}"
+     state: absent
+  with_items: "{{ mysql_anonymous_hosts.stdout_lines|default([]) }}"
+
+- name: Remove the test database
+  mysql_db:
+    name: test
+    state: absent
+
+- name: Override default bind address
+  copy:
+    dest: "{{ mysql_include_dir }}/99-acromedia-bind-address.cnf"
+    content: |
+      [mysqld]
+      bind-address = {{ mysql_bind_address }}
+    force: true
+    owner: root
+    group: root
+    mode: 0644
+    backup: false
+  when: mysql_bind_address != '127.0.0.1'
+  notify:
+    - armdb restart mysql
+
+- debug:
+    var: mysql_allow_from
+
+- name: Give mysql root permission to run commands from places other than localhost (mysql_allow_from = scalar)
+  mysql_user:
+    name: "{{ mysql_user }}"
+    priv: "*.*:ALL,GRANT"
+    append_privs: true
+    state: present
+    password: '{{ mysql_root_password }}'
+    host: '{{ mysql_allow_from }}'
+  when: mysql_root_password is defined
+    and mysql_root_password|trim != ''
+    and mysql_allow_from is string
+    and mysql_allow_from != 'localhost'
+
+- name: Give mysql root permission to run commands from places other than localhost  (mysql_allow_from = list)
+  mysql_user:
+    name: "{{ mysql_user }}"
+    priv: "*.*:ALL,GRANT"
+    append_privs: true
+    state: present
+    password: '{{ mysql_root_password }}'
+    host: '{{ item }}'
+  when: mysql_root_password is defined
+    and mysql_root_password|trim != ''
+    and mysql_allow_from is iterable
+    and (not mysql_allow_from is string)
+    and mysql_allow_from |length > 0
+  with_items: "{{ mysql_allow_from }}"
+
+
+- name: Update mysql root password
+  mysql_user:
+    name: "{{ mysql_user }}"
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+  with_items:
+    - "{{ ansible_fqdn }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: (root_my_cnf is defined
+    and root_my_cnf.stat is defined
+    and root_my_cnf.stat.exists == False)
+    or mysql_root_password is defined
+  register: mysql_password_changed
+
+- block:

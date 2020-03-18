@@ -1,0 +1,23 @@
+---
+- name: Install mariadb prerequisites
+  yum:
+    name:
+      - mariadb-libs
+      - MySQL-python
+      #- perl-DBD-MySQL
+    state: present
+    update_cache: yes
+
+- name: Install MariaDB Server
+  yum:
+    name: mariadb-server
+    state: present
+    update_cache: yes
+  when: client_only == false
+
+- name: Install MariaDB client
+  yum:
+    name: mariadb
+    state: present
+    update_cache: yes
+  when: client_only == true

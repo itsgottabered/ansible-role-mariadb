@@ -1,0 +1,36 @@
+---
+- name: Apply Acro's MariaDB 10.0 server config to Ubuntu 16.04
+  template:
+    src: etc/mysql/conf.d/acro.cnf.j2
+    dest: /etc/mysql/conf.d/acro.cnf
+    owner: root
+    mode: 0644
+    backup: yes
+  notify:
+    - armdb restart mysql
+  when: ansible_distribution_version == '16.04'
+    and client_only == false
+
+- name: Apply MariaDB server customizations on Ubuntu >= 18.04
+  template:
+    src: etc/mysql/mariadb.conf.d/99-acromedia-server-overrides.cnf.j2
+    dest: "{{ mysql_include_dir }}/99-acromedia-server-overrides.cnf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+    - armdb restart mysql
+  when: ansible_distribution == 'Ubuntu' and
+    ansible_distribution_major_version|int >= 18
+    and client_only == false
+
+- name: Apply MariaDB cient customizations on Ubuntu >= 18.04
+  template:
+    src: etc/mysql/mariadb.conf.d/99-acromedia-client-overrides.cnf.j2
+    dest: "{{ mysql_include_dir }}/99-acromedia-client-overrides.cnf"
+    owner: root
+    mode: 0644
+    backup: yes
+  when: ansible_distribution == 'Ubuntu' and
+    ansible_distribution_major_version|int >= 18

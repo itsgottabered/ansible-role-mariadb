@@ -1,0 +1,25 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    mysql_root_password: root
+    client_only: true
+  pre_tasks:
+
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=3600
+      changed_when: false
+
+    - name: Ensure dirmngr is installed (gnupg dependency).
+      apt:
+        name: dirmngr
+        state: present
+  roles:
+    - role: ansible-role-mariadb
+
+  post_tasks:
+    - name: Make sure we can connect to MySQL via Unix socket.
+      command: "mysql -u root -proot -e 'show databases;'"
+      changed_when: false

@@ -1,0 +1,55 @@
+---
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: "${{ github.repository }}"
+      - name: molecule
+        uses: robertdebock/molecule-action@2.6.8
+        with:
+          command: lint
+  test:
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - geerlingguy/docker-ubuntu2004-ansible:latest
+          - geerlingguy/docker-ubuntu1804-ansible:latest
+          - geerlingguy/docker-ubuntu1604-ansible:latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: "${{ github.repository }}"
+
+      - name: Disable apparmor on the runner because of an alleged bug which
+          interferes with mysql service commands. See
+          https://github.com/geerlingguy/ansible-role-mysql/issues/422
+        run: |
+            set -x
+            sudo apt-get install apparmor-profiles
+            sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+            sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+
+      - name: molecule
+        uses: robertdebock/molecule-action@2.6.8
+        with:
+          image: "${{ matrix.image }}"
+          options: parallel
+        env:
+          MOLECULE_DOCKER_IMAGE: "${{ matrix.image }}"
+          max_failures: 1

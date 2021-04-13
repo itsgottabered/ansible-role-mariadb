@@ -31,7 +31,7 @@ mysql_long_query_time: 10
 # mariadb_version: Install whatever the default version for the distro is
 mariadb_version: auto
 # See https://downloads.mariadb.org/mariadb/repositories/#mirror=iweb to customize the following:
-mariadb_mirror: mirror.its.dal.ca
+mariadb_mirror: mariadb.mirror.digitalpacific.com.au
 mariadb_mirror_proto: https
 mariadb_repo_deb_arch: 'amd64,arm64,ppc64el'
 
